@@ -23,6 +23,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore --configuration Release --warnings-as-errors:true
+      run: dotnet build --no-restore --configuration Release --warnaserror
     - name: Test
       run: dotnet test --no-build --verbosity normal
