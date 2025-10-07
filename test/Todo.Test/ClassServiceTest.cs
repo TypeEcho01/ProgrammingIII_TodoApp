@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Todo.Common.Models;
+using Todo.Common.Requests;
 using Todo.Common.Services;
 
 namespace Todo.Test
@@ -18,11 +19,36 @@ namespace Todo.Test
         }
 
         [Fact]
-        public void CreateTaskSucceeds()
+        public async Task CreateTask_Success()
         {
-            TaskService taskService = new TaskService(this.service);
+            var taskService = new TaskService(this.service);
 
-            // make sure this test passes
+            var request = new CreateTaskRequest("Test Task", "Dummy description.", DateTime.UtcNow.AddDays(3));
+            var createTaskResult = await taskService.CreateTaskAsync(request);
+
+            Assert.True(createTaskResult.IsOk());
+        }
+
+        [Fact]
+        public async Task CreateTask_Failure_Name()
+        {
+            var taskService = new TaskService(this.service);
+
+            var request = new CreateTaskRequest("", "Dummy description.", DateTime.UtcNow.AddDays(3));
+            var createTaskResult = await taskService.CreateTaskAsync(request);
+
+            Assert.True(createTaskResult.IsError());
+        }
+
+        [Fact]
+        public async Task CreateTask_Failure_DueDate()
+        {
+            var taskService = new TaskService(this.service);
+
+            var request = new CreateTaskRequest("Test Task", "Dummy description.", DateTime.MinValue.ToUniversalTime());
+            var createTaskResult = await taskService.CreateTaskAsync(request);
+
+            Assert.True(createTaskResult.IsError());
         }
     }
 

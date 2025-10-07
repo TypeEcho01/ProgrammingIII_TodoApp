@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Todo.Common.Models;
 using Todo.Common.Requests;
 
 namespace Todo.Common.Services
@@ -16,10 +17,16 @@ namespace Todo.Common.Services
             this.fileDataService = fileDataService;
         }
 
-        public async Task CreateTaskAsync(CreateTaskRequest request)
+        public async Task<Result> CreateTaskAsync(CreateTaskRequest request)
         {
-            // DO THE STUFF
-            await Task.CompletedTask;
+            var modelResult = TaskModel.CreateTask(request);
+
+            if (modelResult.IsError())
+                return Result.Error(modelResult.GetError());
+
+            await this.fileDataService.SaveAsync(modelResult.GetValue());
+
+            return Result.Ok();
         }
     }
 }
