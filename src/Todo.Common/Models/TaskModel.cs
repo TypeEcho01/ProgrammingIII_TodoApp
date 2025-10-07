@@ -41,10 +41,28 @@ namespace Todo.Common.Models
             (
                 new TaskModel
                 {
-                    Key = Guid.NewGuid().ToString(),
-                    Name = request.Name,
-                    Description = request.Description,
+                    Key = Guid.NewGuid().ToString(), 
+                    Name = request.Name, 
+                    Description = request.Description, 
                     DueDate = request.DueDate
+                }
+            );
+        }
+
+        public static Result<TaskModel> UpdateTask(UpdateTaskRequest request)
+        {
+            var validationResult = request.IsValid();
+            if (validationResult.IsError())
+                return Result<TaskModel>.Error(validationResult.GetError());
+
+            return Result<TaskModel>.Ok
+            (
+                new TaskModel
+                {
+                    Key = request.Key, 
+                    Name = request.TaskModel.Name, 
+                    Description = request.TaskModel.Description, 
+                    DueDate = request.TaskModel.DueDate
                 }
             );
         }

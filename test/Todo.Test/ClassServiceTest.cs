@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Todo.Common.Models;
 using Todo.Common.Requests;
 using Todo.Common.Services;
+using Todo.Common;
 
 namespace Todo.Test
 {
@@ -23,8 +24,8 @@ namespace Todo.Test
         {
             var taskService = new TaskService(this.service);
 
-            var request = new CreateTaskRequest("Test Task", "Dummy description.", DateTime.UtcNow.AddDays(3));
-            var createTaskResult = await taskService.CreateTaskAsync(request);
+            var createTaskRequest = new CreateTaskRequest("Test Task", "Dummy description.", DateTime.UtcNow.AddDays(3));
+            var createTaskResult = await taskService.CreateTaskAsync(createTaskRequest);
 
             Assert.True(createTaskResult.IsOk());
         }
@@ -34,8 +35,8 @@ namespace Todo.Test
         {
             var taskService = new TaskService(this.service);
 
-            var request = new CreateTaskRequest("", "Dummy description.", DateTime.UtcNow.AddDays(3));
-            var createTaskResult = await taskService.CreateTaskAsync(request);
+            var createTaskRequest = new CreateTaskRequest("", "Dummy description.", DateTime.UtcNow.AddDays(3));
+            var createTaskResult = await taskService.CreateTaskAsync(createTaskRequest);
 
             Assert.True(createTaskResult.IsError());
         }
@@ -45,10 +46,21 @@ namespace Todo.Test
         {
             var taskService = new TaskService(this.service);
 
-            var request = new CreateTaskRequest("Test Task", "Dummy description.", DateTime.MinValue.ToUniversalTime());
-            var createTaskResult = await taskService.CreateTaskAsync(request);
+            var createTaskRequest = new CreateTaskRequest("Test Task", "Dummy description.", DateTime.MinValue.ToUniversalTime());
+            var createTaskResult = await taskService.CreateTaskAsync(createTaskRequest);
 
             Assert.True(createTaskResult.IsError());
+        }
+
+        [Fact]
+        public async Task UpdateTask_Success()
+        {
+            var taskService = new TaskService(this.service);
+
+            var createTaskRequest = new CreateTaskRequest("Test Task", "Dummy description.", DateTime.UtcNow.AddDays(3));
+            var createTaskResult = await taskService.CreateTaskAsync(createTaskRequest);
+
+
         }
     }
 

@@ -17,11 +17,25 @@ namespace Todo.Common.Services
             this.fileDataService = fileDataService;
         }
 
-        public async Task<Result> CreateTaskAsync(CreateTaskRequest request)
+        public async Task<Result<string>> CreateTaskAsync(CreateTaskRequest request)
         {
-            var modelResult = TaskModel.CreateTask(request);
-
+            Result<TaskModel> modelResult = TaskModel.CreateTask(request);
             if (modelResult.IsError())
+                return Result<string>.Error(modelResult.GetError());
+
+            TaskModel? taskModel = modelResult.GetValue();
+            if (taskModel is null)
+                return Result<string>.Error("TaskModel is null.");
+
+            await this.fileDataService.SaveAsync(taskModel);
+
+            return Result<string>.Ok(taskModel.Key);
+        }
+
+        public async Task<Result> UpdateTaskAsync(UpdateTaskRequest request)
+        {
+            var modelResult = TaskModel.UpdateTask(request);
+            if (!modelResult.IsError())
                 return Result.Error(modelResult.GetError());
 
             await this.fileDataService.SaveAsync(modelResult.GetValue());

@@ -21,7 +21,7 @@ namespace Todo.Common.Requests
 
         public Result IsValid()
         {
-            if (string.IsNullOrWhiteSpace(Name))
+            if (string.IsNullOrWhiteSpace(this.Name))
                 return Result.Error("Name required.");
 
             if (this.DueDate <= DateTime.UtcNow)
