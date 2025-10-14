@@ -35,7 +35,7 @@ namespace Todo.Common.Services
         public async Task<Result> UpdateTaskAsync(UpdateTaskRequest request)
         {
             var modelResult = TaskModel.UpdateTask(request);
-            if (!modelResult.IsError())
+            if (modelResult.IsError())
                 return Result.Error(modelResult.GetError());
 
             await this.fileDataService.SaveAsync(modelResult.GetValue());
