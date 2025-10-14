@@ -9,7 +9,7 @@ namespace Todo.Common.Services
 {
     public interface IDataService<T, TKey>
     {
-        Task SaveAsync(T obj);
-        Task<T?> GetAsync(TKey key);
+        Task SaveAsync(T? obj);
+        Task<T?> GetAsync(TKey? key);
     }
 }

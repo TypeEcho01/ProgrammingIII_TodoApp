@@ -22,8 +22,11 @@ namespace Todo.Common.Services
             this.path = path;
         }
 
-        public async Task<TaskModel?> GetAsync(string key)
+        public async Task<TaskModel?> GetAsync(string? key)
         {
+            if (key is null)
+                return null;
+
             try
             {
                 string fileName = TaskModelExtensions.ToFileName(key);

@@ -12,10 +12,10 @@ namespace Todo.Common.Requests
         public string Description { get; }
         public DateTime DueDate { get; }
 
-        public CreateTaskRequest(string name, string description, DateTime dueDate)
+        public CreateTaskRequest(string? name, string? description, DateTime dueDate)
         {
-            this.Name = name;
-            this.Description = description;
+            this.Name = name ?? string.Empty;
+            this.Description = description ?? string.Empty;
             this.DueDate = dueDate;
         }
 

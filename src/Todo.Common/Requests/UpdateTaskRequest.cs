@@ -13,9 +13,9 @@ namespace Todo.Common.Requests
         public string Key { get; }
         public TaskModel TaskModel { get; }
 
-        public UpdateTaskRequest(string key, TaskModel taskModel)
+        public UpdateTaskRequest(string? key, TaskModel taskModel)
         {
-            this.Key = key;
+            this.Key = key ?? string.Empty;
             this.TaskModel = taskModel;
         }
 
