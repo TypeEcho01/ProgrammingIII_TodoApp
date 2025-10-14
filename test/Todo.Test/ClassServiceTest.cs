@@ -93,9 +93,12 @@ namespace Todo.Test
                 this.data.Add(t.Key, t);
         }
 
-        public async Task<TaskModel?> GetAsync(string key)
+        public async Task<TaskModel?> GetAsync(string? key)
         {
             await Task.CompletedTask;
+
+            if (key is null)
+                return null;
             
             if (this.data.TryGetValue(key, out TaskModel? value))
                 return value;
