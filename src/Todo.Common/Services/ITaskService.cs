@@ -9,6 +9,8 @@ namespace Todo.Common.Services
 {
     public interface ITaskService
     {
-        Task<Result> CreateTaskAsync(CreateTaskRequest request);
+        Task<Result<string>> CreateTaskAsync(CreateTaskRequest request);
+
+        Task<Result> UpdateTaskAsync(UpdateTaskRequest request);
     }
 }
