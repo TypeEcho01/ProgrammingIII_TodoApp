@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using Todo.Common;
 using Todo.Common.Interfaces;
-using Todo.Common.Models;
-using Task = Todo.Common.Models.Task;
+using Task = Todo.Common.Task;
 
 namespace Todo.Test
 {

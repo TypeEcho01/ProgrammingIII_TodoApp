@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Todo.Common.Models
+namespace Todo.Common
 {
     public class TodoList : ITodoList, IITem
     {
@@ -64,7 +64,7 @@ namespace Todo.Common.Models
             AddTask(new Task(name, description, dueDate));
 
         public ID AddTask(string name, string? description, DateTime dueDate) =>
-            this.AddTask(name, description, new DueDate(dueDate));
+            AddTask(name, description, new DueDate(dueDate));
 
         public ID AddTask(string name, string? description) =>
             AddTask(name, description, null);
@@ -73,7 +73,7 @@ namespace Todo.Common.Models
             AddTask(name, null, dueDate);
 
         public ID AddTask(string name, DateTime dueDate) =>
-            this.AddTask(name, null, new DueDate(dueDate));
+            AddTask(name, null, new DueDate(dueDate));
 
         public ID AddTask(string name) =>
             AddTask(name, null, null);

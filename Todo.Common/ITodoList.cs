@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Todo.Common.Models;
-using Task = Todo.Common.Models.Task;
+using Task = Todo.Common.Task;
 
 namespace Todo.Common
 {

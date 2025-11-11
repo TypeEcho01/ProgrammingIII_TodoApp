@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Todo.Common.Models
+namespace Todo.Common
 {
     public class Task : ITask, IITem, IDue
     {
