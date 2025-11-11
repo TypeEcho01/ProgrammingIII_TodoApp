@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Todo.Common.Interfaces
+namespace Todo.Common
 {
     public interface IITem
     {
         string Name { get; }
-        string? Description { get; }
+        string Description { get; }
 
         bool HasDescription { get; }
     }

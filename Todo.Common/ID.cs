@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Todo.Common.Classes
+namespace Todo.Common
 {
     public sealed class ID : IEquatable<ID>
     {
@@ -25,15 +25,15 @@ namespace Todo.Common.Classes
 
         private static string GetNewKey()
         {
-            UInt128 current = ID.count;
+            UInt128 current = count;
             var builder = new StringBuilder();
 
             while (current > 0)
             {
                 current--;
-                int index = (int)(current % ID.charCount);
-                builder.Append(ID.chars[index]);
-                current /= ID.charCount;
+                int index = (int)(current % charCount);
+                builder.Append(chars[index]);
+                current /= charCount;
             }
 
             // Reverse the string
@@ -49,31 +49,31 @@ namespace Todo.Common.Classes
         // Private constructor for ID.Empty with a dummy argument
         private ID(object? _)
         {
-            this.key = string.Empty;
+            key = string.Empty;
         }
 
         public ID()
         {
-            ID.count++;
+            count++;
 
-            this.key = ID.GetNewKey();
+            key = GetNewKey();
         }
 
         public override string ToString() =>
-            this.key;
+            key;
 
         public bool Equals(string? str)
         {
             if (str is null)
                 return false;
 
-            return (this.key == str);
+            return key == str;
         }
 
         public override bool Equals(object? obj)
         {
             if (obj is ID id)
-                return this.Equals(id);
+                return Equals(id);
 
             return false;
         }
@@ -83,21 +83,21 @@ namespace Todo.Common.Classes
             if (other is null)
                 return false;
 
-            return (this.key == other.key);
+            return key == other.key;
         }
 
         public static bool operator ==(ID? left, ID? right)
         {
             if (left is null)
-                return (right is null);
+                return right is null;
 
             return left.Equals(right);
         }
 
         public static bool operator !=(ID? left, ID? right) =>
-            (!(left == right));
+            !(left == right);
 
         public override int GetHashCode() =>
-            this.key.GetHashCode();
+            key.GetHashCode();
     }
 }

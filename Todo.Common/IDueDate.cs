@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Todo.Common.Interfaces
+namespace Todo.Common
 {
     public interface IDueDate
     {

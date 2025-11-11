@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Todo.Common.Enums;
 
-namespace Todo.Common.Interfaces
+namespace Todo.Common
 {
     public interface ITask
     {

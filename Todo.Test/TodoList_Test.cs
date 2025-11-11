@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Todo.Common.Classes;
+using Todo.Common;
 using Todo.Common.Interfaces;
-using Task = Todo.Common.Classes.Task;
+using Todo.Common.Models;
+using Task = Todo.Common.Models.Task;
 
 namespace Todo.Test
 {

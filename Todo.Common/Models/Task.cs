@@ -3,30 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Todo.Common.Interfaces;
-using Todo.Common.Enums;
-
-namespace Todo.Common.Classes
+namespace Todo.Common.Models
 {
     public class Task : ITask, IITem, IDue
     {
         public static readonly Task Empty = new Task(string.Empty);
 
         public string Name { get; set; }
-        public string? Description { get; set; }
-        public DueDate? DueDate { get; private set; }
+        public string Description { get; set; }
+        public DueDate DueDate { get; private set; }
         public TaskState State { get; private set; }
 
         public bool IsComplete => 
-            (this.State == TaskState.Complete);
+            State == TaskState.Complete;
         public bool IsInProgress => 
-            (this.State == TaskState.InProgress);
+            State == TaskState.InProgress;
 
         public bool HasDescription =>
-            (this.Description is not null);
+            !string.IsNullOrEmpty(Description);
 
         public bool IsDue =>
-            (this.DueDate is not null);
+            !ReferenceEquals(DueDate, DueDate.Empty);
 
         public Task(string name) : 
             this(name, null, null) { }
@@ -42,15 +39,19 @@ namespace Todo.Common.Classes
 
         public Task(string name, string? description, DueDate? dueDate)
         {
-            this.Name = name;
+            Name = name;
 
             if (string.IsNullOrWhiteSpace(description))
-                this.Description = null;
+                Description = string.Empty;
             else
-                this.Description = description;
+                Description = description;
 
-            this.DueDate = dueDate;
-            this.State = TaskState.InProgress;
+            if (dueDate is null)
+                DueDate = DueDate.Empty;
+            else
+                DueDate = dueDate;
+
+            State = TaskState.InProgress;
         }
 
         public Task(string name, string? description, DateTime dueDate) :
@@ -58,23 +59,23 @@ namespace Todo.Common.Classes
 
         public override string ToString()
         {
-            var builder = new StringBuilder(this.Name);
+            var builder = new StringBuilder(Name);
 
-            if (this.Description is not null)
-                builder.Append($": {this.Description}");
+            if (HasDescription)
+                builder.Append($": {Description}");
 
-            if (this.DueDate is not null)
-                builder.Append($" (Due {this.DueDate})");
+            if (IsDue)
+                builder.Append($" (Due {DueDate})");
 
             return builder.ToString();
         }
 
         public void Complete()
         {
-            this.State = TaskState.Complete;
+            State = TaskState.Complete;
         }
 
         public Task Copy() =>
-            new Task(this.Name, this.Description, this.DueDate);
+            new Task(Name, Description, DueDate);
     }
 }

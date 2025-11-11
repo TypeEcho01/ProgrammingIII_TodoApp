@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Todo.Common.Enums
+namespace Todo.Common
 {
-    public enum TaskState
+    public interface IDue
     {
-        Complete, 
-        InProgress
+        DueDate DueDate { get; }
     }
 }

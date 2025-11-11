@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Todo.Common.Models;
+using Task = Todo.Common.Models.Task;
 
-using Todo.Common.Classes;
-using Task = Todo.Common.Classes.Task;
-
-namespace Todo.Common.Interfaces
+namespace Todo.Common
 {
     public interface ITodoList : IEnumerable<(ID, Task)>
     {
