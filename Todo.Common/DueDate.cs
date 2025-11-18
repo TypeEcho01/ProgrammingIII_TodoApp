@@ -20,9 +20,6 @@ namespace Todo.Common
 
         public DueDate(DateTime date)
         {
-            this.Type = this.GetType();
-            this.ID = new ID();
-
             this.Date = date;
         }
 

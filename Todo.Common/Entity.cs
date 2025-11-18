@@ -10,12 +10,18 @@ namespace Todo.Common
 {
     public abstract class Entity : IEntity
     {
-        protected Type Type { get; set; }
+        protected Type Type { get; }
 
-        public ID ID { get; protected set; }
+        public ID ID { get; }
 
         private string GetTypeName() =>
             this.Type.FormatName();
+
+        protected Entity()
+        {
+            this.Type = this.GetType();
+            this.ID = new ID();
+        }
 
         public Result<T> GetField<T>(string name)
         {

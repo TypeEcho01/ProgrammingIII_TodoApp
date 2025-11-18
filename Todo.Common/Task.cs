@@ -45,9 +45,6 @@ namespace Todo.Common
 
         public Task(string name, string? description, DueDate? dueDate)
         {
-            this.Type = this.GetType();
-            this.ID = new ID();
-
             this.Name = name;
 
             if (string.IsNullOrWhiteSpace(description))

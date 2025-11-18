@@ -33,9 +33,6 @@ namespace Todo.Common
 
         public TodoList(string name, string? description)
         {
-            this.Type = this.GetType();
-            this.ID = new ID();
-
             Tasks = new List<Task>();
 
             Name = name;
