@@ -5,13 +5,16 @@ using System.Text;
 
 namespace Todo.Common
 {
-    public class Task : ITask, IITem, IDue
+    public class Task : Entity, ITask, IITem, IDue
     {
         public static readonly Task Empty = new Task(string.Empty);
 
+        public static bool IsEmpty(Task task) =>
+            ReferenceEquals(task, Task.Empty);
+
         public string Name { get; set; }
         public string Description { get; set; }
-        public DueDate DueDate { get; private set; }
+        public DueDate DueDate { get; set; }
         public TaskState State { get; private set; }
 
         public bool IsComplete => 
@@ -19,8 +22,11 @@ namespace Todo.Common
         public bool IsInProgress => 
             State == TaskState.InProgress;
 
+        public bool HasName =>
+            !string.IsNullOrWhiteSpace(Name);
+
         public bool HasDescription =>
-            !string.IsNullOrEmpty(Description);
+            !string.IsNullOrWhiteSpace(Description);
 
         public bool IsDue =>
             !ReferenceEquals(DueDate, DueDate.Empty);
@@ -39,19 +45,22 @@ namespace Todo.Common
 
         public Task(string name, string? description, DueDate? dueDate)
         {
-            Name = name;
+            this.Type = this.GetType();
+            this.ID = new ID();
+
+            this.Name = name;
 
             if (string.IsNullOrWhiteSpace(description))
-                Description = string.Empty;
+                this.Description = string.Empty;
             else
-                Description = description;
+                this.Description = description;
 
             if (dueDate is null)
-                DueDate = DueDate.Empty;
+                this.DueDate = DueDate.Empty;
             else
-                DueDate = dueDate;
+                this.DueDate = dueDate;
 
-            State = TaskState.InProgress;
+            this.State = TaskState.InProgress;
         }
 
         public Task(string name, string? description, DateTime dueDate) :
@@ -77,5 +86,8 @@ namespace Todo.Common
 
         public Task Copy() =>
             new Task(Name, Description, DueDate);
+
+        public bool IsEmpty() =>
+            Task.IsEmpty(this);
     }
 }

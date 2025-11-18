@@ -6,38 +6,40 @@ using Task = Todo.Common.Task;
 
 namespace Todo.Common
 {
-    public interface ITodoList : IEnumerable<(ID, Task)>
+    public interface ITodoList : IEnumerable<Task>
     {
-        ID AddTask(Task task);
+        void AddTask(Task task);
 
-        ID AddTask(string name, string? description, DueDate? dueDate);
+        bool CompleteTask(Task task);
 
-        ID AddTask(string name, string? description, DateTime dueDate);
+        bool ContainsTask(Task task);
 
-        ID AddTask(string name, string? description);
+        bool CopyTask(Task task, ITodoList source);
 
-        ID AddTask(string name, DueDate? dueDate);
+        bool DeleteTask(Task task);
 
-        ID AddTask(string name, DateTime dueDate);
+        List<Task> GetAllTasks();
 
-        ID AddTask(string name);
+        Result<Task> GetTask(ID id);
 
-        Task GetTask(ID id);
+        Result<Task> GetTask(int index);
 
-        bool TryGetTask(ID id, out Task task);
+        Result<Task> GetTask(Index index);
 
-        bool DeleteTask(ID id);
+        Result<Task> GetTask(string name);
 
-        bool MoveTask(ID id, TodoList? source);
+        Result<Task> GetTaskByID(ID id);
 
-        ID CopyTask(ID id, TodoList? source);
+        Result<Task> GetTaskByIndex(int index);
 
-        bool CompleteTask(ID id);
+        Result<Task> GetTaskByIndex(Index index);
 
-        IEnumerator<ID> GetIDs();
+        Result<Task> GetTaskByName(string name);
 
-        IEnumerator<Task> GetTasks();
+        bool MoveTask(Task task, ITodoList source);
 
-        IEnumerator<(ID, Task)> GetIDTaskPairs();
+        Task[] ToArray();
+
+        List<Task> ToList();
     }
 }

@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace Todo.Common
 {
-    public class DueDate : IDueDate
+    public class DueDate : Entity, IDueDate
     {
+        public static bool IsEmpty(DueDate dueDate) =>
+            ReferenceEquals(dueDate, DueDate.Empty);
+
         public static DueDate Empty = new DueDate(DateTime.MinValue);
 
         private static DateTime Now =>
@@ -17,23 +20,23 @@ namespace Todo.Common
 
         public DueDate(DateTime date)
         {
-            Date = date;
+            this.Type = this.GetType();
+            this.ID = new ID();
+
+            this.Date = date;
         }
 
-        public DueDate(int year, int month, int day)
-        {
-            Date = new DateTime(year, month, day);
-        }
+        public DueDate(int year, int month, int day) : 
+            this(new DateTime(year, month, day)) { }
 
-        public DueDate(int year, int month, int day, int hour)
-        {
-            Date = new DateTime(year, month, day, hour, minute: 0, second: 0);
-        }
+        public DueDate(int year, int month, int day, int hour) :
+            this(new DateTime(year, month, day, hour, minute: 0, second: 0)) { }
 
-        public DueDate(int year, int month, int day, int hour, int minute)
-        {
-            Date = new DateTime(year, month, day, hour, minute, second: 0);
-        }
+        public DueDate(int year, int month, int day, int hour, int minute) :
+            this(new DateTime(year, month, day, hour, minute, second: 0)) { }
+
+        public bool IsEmpty() =>
+            DueDate.IsEmpty(this);
 
         public bool IsOnTime() =>
             Now < Date;

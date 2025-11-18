@@ -9,6 +9,9 @@ namespace Todo.Common
 {
     public sealed class ID : IEquatable<ID>
     {
+        public static bool IsEmpty(ID id) =>
+            ReferenceEquals(id, ID.Empty);
+
         public static readonly ID Empty = new ID(null);
 
         private static readonly char[] chars =
@@ -99,5 +102,8 @@ namespace Todo.Common
 
         public override int GetHashCode() =>
             key.GetHashCode();
+
+        public bool IsEmpty() =>
+            ID.IsEmpty(this);
     }
 }

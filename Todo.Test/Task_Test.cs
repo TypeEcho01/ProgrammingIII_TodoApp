@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Todo.Common.Classes;
-using Task = Todo.Common.Task;
+using System.Threading.Tasks;
 using Todo.Common;
+
+using Task = Todo.Common.Task;
 
 namespace Todo.Test
 {
@@ -13,10 +14,10 @@ namespace Todo.Test
         [Fact]
         public void Empty_Defaults_Correct()
         {
-            Assert.Equal(string.Empty, Task.Empty.Name);
-            Assert.Null(Task.Empty.Description);
-            Assert.Null(Task.Empty.DueDate);
-            Assert.Equal(TaskState.InProgress, Task.Empty.State);
+            Assert.False(Task.Empty.HasName);
+            Assert.False(Task.Empty.HasDescription);
+            Assert.False(Task.Empty.IsDue);
+            Assert.False(Task.Empty.IsComplete);
         }
 
         [Fact]
@@ -25,9 +26,9 @@ namespace Todo.Test
             Task task = new Task("Test Task");
 
             Assert.Equal("Test Task", task.Name);
-            Assert.Null(task.Description);
-            Assert.Null(task.DueDate);
-            Assert.Equal(TaskState.InProgress, task.State);
+            Assert.False(task.HasDescription);
+            Assert.False(task.IsDue);
+            Assert.False(task.IsComplete);
         }
 
         [Fact]

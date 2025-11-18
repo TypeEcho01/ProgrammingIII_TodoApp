@@ -11,6 +11,8 @@ namespace Todo.Common
         string Name { get; }
         string Description { get; }
 
+        bool HasName { get; }
+
         bool HasDescription { get; }
     }
 }

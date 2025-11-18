@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Todo.Common;
-using Todo.Common.Interfaces;
+
 using Task = Todo.Common.Task;
 
 namespace Todo.Test
@@ -13,8 +13,8 @@ namespace Todo.Test
         [Fact]
         public void Empty_Defaults_Correct()
         {
-            Assert.Equal(TodoList.Empty.Name, string.Empty);
-            Assert.Null(TodoList.Empty.Description);
+            Assert.False(TodoList.Empty.HasName);
+            Assert.False(TodoList.Empty.HasDescription);
             Assert.Equal(0, TodoList.Empty.Count);
         }
 
@@ -24,7 +24,7 @@ namespace Todo.Test
             TodoList todoList = new TodoList("Test TodoList");
 
             Assert.Equal("Test TodoList", todoList.Name);
-            Assert.Null(todoList.Description);
+            Assert.False(todoList.HasDescription);
             Assert.Equal(0, todoList.Count);
         }
 
@@ -34,46 +34,11 @@ namespace Todo.Test
             TodoList todoList = new TodoList("Test TodoList");
             Task taskA = new Task("Test Task");
 
-            ID id = todoList.AddTask(taskA);
+            todoList.AddTask(taskA);
+            Result<Task> result = todoList.GetTask(0);
 
-            Assert.True(todoList.TryGetTask(id, out Task taskB));
-            Assert.Equal(taskA, taskB);
-            Assert.Equal(1, todoList.Count);
-        }
-
-        [Fact]
-        public void AddTask_Failure_Task_IsEmpty()
-        {
-            TodoList todoList = new TodoList("Test TodoList");
-
-            Assert.Throws<ArgumentException>
-            (
-                () => todoList.AddTask(Task.Empty)
-            );
-        }
-
-        [Fact]
-        public void AddTask_Failure_Name_IsEmpty()
-        {
-            TodoList todoList = new TodoList("Test TodoList");
-            Task task = new Task(string.Empty);
-
-            Assert.Throws<ArgumentException>
-            (
-                () => todoList.AddTask(task)
-            );
-        }
-
-        [Fact]
-        public void AddTask_Failure_DueDate_IsLate()
-        {
-            TodoList todoList = new TodoList("Test TodoList");
-            Task task = new Task("Test Task", DateTime.MinValue);
-
-            Assert.Throws<ArgumentException>
-            (
-                () => todoList.AddTask(task)
-            );
+            Assert.True(result.IsSuccess);
+            Assert.Equal(taskA, result.GetValue());
         }
 
         [Fact]
@@ -82,9 +47,9 @@ namespace Todo.Test
             TodoList todoList = new TodoList("Test TodoList");
             Task task = new Task("Test Task");
 
-            ID id = todoList.AddTask(task);
+            todoList.AddTask(task);
 
-            Assert.Equal(todoList.GetTask(id), task);
+            Assert.True(todoList.GetTask(0).IsSuccess);
         }
 
         [Fact]
@@ -92,10 +57,7 @@ namespace Todo.Test
         {
             TodoList todoList = new TodoList("Test TodoList");
 
-            Assert.Throws<KeyNotFoundException>
-            (
-                () => todoList.GetTask(new ID())
-            );
+            Assert.True(todoList.GetTask(0).IsFailure);
         }
 
         [Fact]
@@ -104,11 +66,10 @@ namespace Todo.Test
             TodoList todoList = new TodoList("Test TodoList");
             Task task = new Task("Test Task");
 
-            ID id = todoList.AddTask(task);
+            todoList.AddTask(task);
 
-            Assert.True(todoList.TryGetTask(id, out var _));
-            Assert.True(todoList.DeleteTask(id));
-            Assert.False(todoList.TryGetTask(id, out var _));
+            Assert.True(todoList.DeleteTask(task));
+            Assert.True(todoList.GetTask(0).IsFailure);
         }
 
         [Fact]
@@ -118,13 +79,21 @@ namespace Todo.Test
             TodoList b = new TodoList("Test TodoList B");
             Task task = new Task("Test Task");
 
-            ID id = a.AddTask(task);
+            a.AddTask(task);
 
-            Assert.True(a.TryGetTask(id, out var _));
-            Assert.False(b.TryGetTask(id, out var _));
-            Assert.True(a.MoveTask(id, b));
-            Assert.False(a.TryGetTask(id, out var _));
-            Assert.True(b.TryGetTask(id, out var _));
+            // Assert "a" contains the Task while "b" does not
+            Assert.True(a.ContainsTask(task));
+            Assert.False(b.ContainsTask(task));
+
+            // Assert MoveTask succeeded
+            Assert.True(a.MoveTask(task, b));
+
+            // Assert "b" contains the Task while "a" does not
+            Assert.False(a.ContainsTask(task));
+            Assert.True(b.ContainsTask(task));
+
+            // Assert the moved Task is the same object
+            Assert.Same(b.GetTask(0).GetValue(), task);
         }
 
         [Fact]
@@ -134,15 +103,21 @@ namespace Todo.Test
             TodoList b = new TodoList("Test TodoList B");
             Task task = new Task("Test Task");
 
-            ID idA = a.AddTask(task);
-            ID idB = a.CopyTask(idA, b);
+            a.AddTask(task);
 
-            Assert.False(ReferenceEquals(idB, ID.Empty));
-            Assert.False(ReferenceEquals(idA, idB));
-            Assert.True(a.TryGetTask(idA, out var _));
-            Assert.True(b.TryGetTask(idB, out var _));
-            Assert.False(a.TryGetTask(idB, out var _));
-            Assert.False(b.TryGetTask(idA, out var _));
+            // Assert "a" contains the Task while "b" does not
+            Assert.True(a.ContainsTask(task));
+            Assert.False(b.ContainsTask(task));
+
+            // Assert CopyTask succeeded
+            Assert.True(a.CopyTask(task, b));
+
+            // Assert both "a" and "b" contain the Task
+            Assert.True(a.ContainsTask(task));
+            Assert.True(b.ContainsTask(task));
+
+            // Assert the copied Task is a different
+            Assert.NotSame(b.GetTask(0).GetValue(), task);
         }
 
         [Fact]
@@ -151,9 +126,9 @@ namespace Todo.Test
             TodoList todoList = new TodoList("Test TodoList");
             Task task = new Task("Test Task");
 
-            ID id = todoList.AddTask(task);
+            todoList.AddTask(task);
 
-            Assert.True(todoList.CompleteTask(id));
+            Assert.True(todoList.CompleteTask(task));
             Assert.True(task.IsComplete);
         }
     }

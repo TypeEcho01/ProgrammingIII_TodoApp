@@ -7,131 +7,47 @@ using System.Text;
 
 namespace Todo.Common
 {
-    public class TodoList : ITodoList, IITem
+    public class TodoList : Entity, ITodoList, IITem
     {
         public static readonly TodoList Empty = new TodoList(string.Empty);
 
-        private Dictionary<ID, Task> Tasks { get; }
+        public static bool IsEmpty(TodoList todoList) =>
+            ReferenceEquals(todoList, Task.Empty);
+
+        private List<Task> Tasks { get; }
 
         public int Count => 
             Tasks.Count;
 
-        public string Name { get; private set; }
-        public string Description { get; private set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
+        public bool HasName =>
+            !string.IsNullOrWhiteSpace(Name);
 
         public bool HasDescription =>
-            !string.IsNullOrEmpty(Description);
+            !string.IsNullOrWhiteSpace(Description);
 
         public TodoList(string name) : 
             this(name, null) { }
 
         public TodoList(string name, string? description)
         {
-            Tasks = new Dictionary<ID, Task>();
+            this.Type = this.GetType();
+            this.ID = new ID();
+
+            Tasks = new List<Task>();
 
             Name = name;
-            Description = description ?? string.Empty;
+            Description = (string.IsNullOrWhiteSpace(description)) ? (string.Empty) : (description);
         }
 
-        private static void VerifyTask(Task task)
+        public void AddTask(Task task) =>
+            this.Tasks.Add(task);
+
+        public bool CompleteTask(Task task)
         {
-            if (ReferenceEquals(task, Task.Empty))
-                throw new ArgumentException("task cannot be Empty.");
-
-            if (string.IsNullOrWhiteSpace(task.Name))
-                throw new ArgumentException("task cannot have an empty Name.");
-
-            if (task.IsDue && task.DueDate.IsLate())
-                throw new ArgumentException("task cannot have a DueDate in the past.");
-        }
-
-        public ID AddTask(Task task)
-        {
-            VerifyTask(task);
-
-            ID id = new ID();
-
-            Tasks.Add
-            (
-                key: id,
-                value: task
-            );
-
-            return id;
-        }
-
-        public ID AddTask(string name, string? description, DueDate? dueDate) =>
-            AddTask(new Task(name, description, dueDate));
-
-        public ID AddTask(string name, string? description, DateTime dueDate) =>
-            AddTask(name, description, new DueDate(dueDate));
-
-        public ID AddTask(string name, string? description) =>
-            AddTask(name, description, null);
-
-        public ID AddTask(string name, DueDate? dueDate) =>
-            AddTask(name, null, dueDate);
-
-        public ID AddTask(string name, DateTime dueDate) =>
-            AddTask(name, null, new DueDate(dueDate));
-
-        public ID AddTask(string name) =>
-            AddTask(name, null, null);
-
-        public Task GetTask(ID id)
-        {
-            if (!Tasks.TryGetValue(id, out var task))
-                throw new KeyNotFoundException($"Task with ID \"{id}\" was not found.");
-
-            return task;
-        }
-
-        public bool TryGetTask(ID id, out Task task)
-        {
-            try
-            {
-                task = GetTask(id);
-                return true;                
-            }
-            catch (KeyNotFoundException)
-            {
-                task = Task.Empty;
-                return false;
-            }
-        }
-
-        public bool DeleteTask(ID id) =>
-            Tasks.Remove(id);
-
-        public bool MoveTask(ID id, TodoList? source)
-        {
-            if (source is null)
-                return false;
-
-            if (!TryGetTask(id, out var task))
-                return false;
-
-            DeleteTask(id);
-
-            source.Tasks.Add(id, task);
-
-            return true;
-        }
-
-        public ID CopyTask(ID id, TodoList? source)
-        {
-            if (source is null)
-                return ID.Empty;
-
-            if (!TryGetTask(id, out var task))
-                return ID.Empty;
-
-            return source.AddTask(task.Copy());
-        }
-
-        public bool CompleteTask(ID id)
-        {
-            if (!TryGetTask(id, out var task))
+            if (!this.ContainsTask(task))
                 return false;
 
             task.Complete();
@@ -139,28 +55,106 @@ namespace Todo.Common
             return true;
         }
 
-        public IEnumerator<ID> GetIDs()
+        public bool ContainsTask(Task task) =>
+            this.Tasks.Contains(task);
+
+        public bool CopyTask(Task task, ITodoList source)
         {
-            foreach (ID id in Tasks.Keys)
-                yield return id;
+            if (!this.ContainsTask(task))
+                    return false;
+
+            source.AddTask(task.Copy());
+
+            return true;
         }
 
-        public IEnumerator<Task> GetTasks()
+        public bool DeleteTask(Task task) =>
+            this.Tasks.Remove(task);
+
+        public List<Task> GetAllTasks() =>
+            this.ToList();
+
+        public Result<Task> GetTask(ID id) =>
+            this.GetTaskByID(id);
+
+        public Result<Task> GetTask(int index) =>
+            this.GetTaskByIndex(index);
+
+        public Result<Task> GetTask(Index index) =>
+            this.GetTaskByIndex(index);
+
+        public Result<Task> GetTask(string name) =>
+            this.GetTaskByName(name);
+
+        public Result<Task> GetTaskByID(ID id)
         {
-            foreach (Task task in Tasks.Values)
+            foreach (Task task in this)
+            {
+                if (task.ID == id)
+                    return Result.Success(task);
+            }
+
+            return Result.Failure<Task>($"Failed to find Task with ID \"{id}\".");
+        }
+
+        public Result<Task> GetTaskByIndex(int index)
+        {
+            try
+            {
+                return Result.Success(this.Tasks[index]);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return Result.Failure<Task>("Index out of range.");
+            }
+        }
+
+        public Result<Task> GetTaskByIndex(Index index)
+        {
+            try
+            {
+                return Result.Success(this.Tasks[index]);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return Result.Failure<Task>("Index out of range.");
+            }
+        }
+
+        public Result<Task> GetTaskByName(string name)
+        {
+            foreach (Task task in this)
+            {
+                if (task.Name == name)
+                    return Result.Success(task);
+            }
+
+            return Result.Failure<Task>($"Failed to find Task with Name \"{name}\".");
+        }
+
+        public bool MoveTask(Task task, ITodoList source)
+        {
+            if (!this.DeleteTask(task))
+                return false;
+
+            source.AddTask(task);
+
+            return true;
+        }
+
+        public Task[] ToArray() =>
+            this.Tasks.ToArray();
+
+        public List<Task> ToList() =>
+            this.Tasks.ToList();
+
+        public IEnumerator<Task> GetEnumerator()
+        {
+            foreach (Task task in this.Tasks)
                 yield return task;
         }
 
-        public IEnumerator<(ID, Task)> GetIDTaskPairs()
-        {
-            foreach (var pair in Tasks)
-                yield return (pair.Key, pair.Value);
-        }
-
         IEnumerator IEnumerable.GetEnumerator() =>
-            GetIDTaskPairs();
-
-        IEnumerator<(ID, Task)> IEnumerable<(ID, Task)>.GetEnumerator() =>
-            GetIDTaskPairs();
+            this.GetEnumerator();
     }
 }

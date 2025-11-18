@@ -9,6 +9,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Todo.App.ViewModels;
+
 namespace Todo.App;
 
 /// <summary>
@@ -18,6 +20,8 @@ public partial class MainWindow : Window
 {
     public MainWindow()
     {
-        InitializeComponent();
+        this.InitializeComponent();
+
+        this.TaskView.DataContext = App.Task;
     }
 }

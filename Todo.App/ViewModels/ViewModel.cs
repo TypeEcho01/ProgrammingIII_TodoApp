@@ -14,27 +14,39 @@ namespace Todo.App.ViewModels
     {
         public event PropertyChangedEventHandler? PropertyChanged = (sender, e) => { };
 
-        protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        protected void RaisePropertyChangedEvent([CallerMemberName] string? propertyName = null)
+        {
+            if (this.PropertyChanged == null)
+                throw new InvalidOperationException("Cannot RaisePropertyChangedEvent without a property name.");
+
+            this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
-    public abstract class Command : ICommand
+    public class Command : ICommand
     {
-        private Action CommandAction { get; }
-        private bool CanExecuteCommand { get; }
+        private ICommandOnExecute execute;
+        private ICommandOnCanExecute canExecute;
 
-        public event EventHandler? CanExecuteChanged = (sender, e) => { };
+        public delegate void ICommandOnExecute(object? parameter);
+        public delegate bool ICommandOnCanExecute(object? parameter);
 
-        public Command(Action action)
+        public Command(ICommandOnExecute onExecuteMethod, ICommandOnCanExecute onCanExecuteMethod)
         {
-            this.CommandAction = action;
-            this.CanExecuteCommand = true;
+            this.execute = onExecuteMethod;
+            this.canExecute = onCanExecuteMethod;
+        }
+
+        public event EventHandler? CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
         }
 
         public bool CanExecute(object? parameter) =>
-            this.CanExecuteCommand;
+            this.canExecute.Invoke(parameter);
 
         public void Execute(object? parameter) =>
-            this.CommandAction();
+            this.execute.Invoke(parameter);
     }
 }
