@@ -46,7 +46,10 @@ namespace Todo.Common
             {
                 Result<TField?> result = entity.GetNullableProperty<TField>(name);
 
-                if (result.IsSuccess)
+                if (result.IsFailure)
+                    continue;
+
+                if (object.Equals(result.GetValue(), value))
                     return Result.Success(entity);
             }
 
@@ -78,7 +81,10 @@ namespace Todo.Common
             {
                 Result<TProperty?> result = entity.GetNullableProperty<TProperty>(name);
 
-                if (result.IsSuccess)
+                if (result.IsFailure)
+                    continue;
+
+                if (object.Equals(result.GetValue(), value))
                     return Result.Success(entity);
             }
 
