@@ -6,10 +6,9 @@
         xmlns:local="clr-namespace:Todo.App"
         xmlns:views="clr-namespace:Todo.App.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Todo App" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen">
     <Grid>
-        <StackPanel>
-            <views:TaskView x:Name="TaskView"/>
-        </StackPanel>
+        <views:TodoListView x:Name="TodoListView"/>
     </Grid>
 </Window>

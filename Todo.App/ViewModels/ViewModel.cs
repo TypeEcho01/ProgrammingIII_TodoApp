@@ -37,6 +37,9 @@ namespace Todo.App.ViewModels
             this.canExecute = onCanExecuteMethod;
         }
 
+        public Command(ICommandOnExecute onExecuteMethod) :
+            this(onExecuteMethod, (parameter) => true) { }
+
         public event EventHandler? CanExecuteChanged
         {
             add { CommandManager.RequerySuggested += value; }

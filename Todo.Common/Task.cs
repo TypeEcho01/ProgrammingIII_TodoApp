@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Todo.Common
 {
@@ -15,7 +16,7 @@ namespace Todo.Common
         public string Name { get; set; }
         public string Description { get; set; }
         public DueDate DueDate { get; set; }
-        public TaskState State { get; private set; }
+        public TaskState State { get; set; }
 
         public bool IsComplete => 
             State == TaskState.Complete;
@@ -29,7 +30,16 @@ namespace Todo.Common
             !string.IsNullOrWhiteSpace(Description);
 
         public bool IsDue =>
-            !ReferenceEquals(DueDate, DueDate.Empty);
+            (!ReferenceEquals(DueDate, DueDate.Empty)) && (this.DueDate.Date != DueDate.Empty.Date);
+
+        [JsonConstructor]
+        public Task()
+        {
+            this.Name = "Task";
+            this.Description = string.Empty;
+            this.DueDate = DueDate.Empty;
+            this.State = TaskState.InProgress;
+        }
 
         public Task(string name) : 
             this(name, null, null) { }

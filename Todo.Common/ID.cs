@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Todo.Common
@@ -26,6 +27,8 @@ namespace Todo.Common
 
         private readonly string key;
 
+        public string Key => this.key;
+
         private static string GetNewKey()
         {
             UInt128 current = count;
@@ -47,6 +50,12 @@ namespace Todo.Common
 
             return builder.ToString();
 
+        }
+
+        [JsonConstructor]
+        public ID(string key)
+        {
+            this.key = key;
         }
 
         // Private constructor for ID.Empty with a dummy argument

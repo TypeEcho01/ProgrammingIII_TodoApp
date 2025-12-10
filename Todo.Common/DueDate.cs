@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Todo.Common
@@ -14,10 +15,16 @@ namespace Todo.Common
         public static DueDate Empty = new DueDate(DateTime.MinValue);
 
         private static DateTime Now =>
-            DateTime.UtcNow;
+            DateTime.Now;
 
-        public DateTime Date { get; private set; }
+        public DateTime Date { get; set; }
 
+        public DueDate()
+        {
+            this.Date = DueDate.Now;
+        }
+
+        [JsonConstructor]
         public DueDate(DateTime date)
         {
             this.Date = date;
@@ -36,10 +43,10 @@ namespace Todo.Common
             DueDate.IsEmpty(this);
 
         public bool IsOnTime() =>
-            Now < Date;
+            Now <= Date;
 
         public bool IsLate() =>
-            Now >= Date;
+            Now > Date;
 
         public void ChangeDate(DateTime newDate) =>
             Date = newDate;

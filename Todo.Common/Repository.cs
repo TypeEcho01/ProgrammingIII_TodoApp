@@ -10,15 +10,28 @@ namespace Todo.Common
 {
     public class Repository<T> : IRepository<T> where T : Entity
     {
-        private List<T> Entities { get; }
+        public List<T> Entities { get; protected set; }
 
         public Repository()
         {
             this.Entities = [];
         }
 
+        protected void Override(IEnumerable<T> enumerable)
+        {
+            this.Entities = enumerable.ToList();
+        }
+
+        protected void Override(List<T> enumerable)
+        {
+            this.Entities = new List<T>(enumerable);
+        }
+
         public void Add(T entity) =>
             this.Entities.Add(entity);
+
+        public void Clear() =>
+            this.Entities.Clear();
 
         public bool Contains(T entity) =>
             this.Entities.Contains(entity);

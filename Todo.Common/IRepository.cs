@@ -10,6 +10,8 @@ namespace Todo.Common
     {
         void Add(T entity);
 
+        void Clear();
+
         bool Contains(T entity);
 
         bool Delete(T entity);

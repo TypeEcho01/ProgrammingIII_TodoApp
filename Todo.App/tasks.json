@@ -1,0 +1,40 @@
+[
+  {
+    "Name": "Example Task",
+    "Description": "Description for the task.",
+    "DueDate": {
+      "Date": "2026-05-01T23:59:59",
+      "ID": {
+        "Key": "H"
+      }
+    },
+    "State": 1,
+    "IsComplete": false,
+    "IsInProgress": true,
+    "HasName": true,
+    "HasDescription": true,
+    "IsDue": true,
+    "ID": {
+      "Key": "G"
+    }
+  },
+  {
+    "Name": "Completed Example",
+    "Description": "This task is completed.",
+    "DueDate": {
+      "Date": "2025-12-09T22:00:59",
+      "ID": {
+        "Key": "K"
+      }
+    },
+    "State": 0,
+    "IsComplete": true,
+    "IsInProgress": false,
+    "HasName": true,
+    "HasDescription": true,
+    "IsDue": true,
+    "ID": {
+      "Key": "G"
+    }
+  }
+]

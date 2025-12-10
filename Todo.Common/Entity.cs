@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Todo.Common
@@ -12,10 +13,17 @@ namespace Todo.Common
     {
         protected Type Type { get; }
 
-        public ID ID { get; }
+        public ID ID { get; set; }
 
         private string GetTypeName() =>
             this.Type.FormatName();
+
+        [JsonConstructor]
+        protected Entity(ID id)
+        {
+            this.Type = this.GetType();
+            this.ID = id;
+        }
 
         protected Entity()
         {

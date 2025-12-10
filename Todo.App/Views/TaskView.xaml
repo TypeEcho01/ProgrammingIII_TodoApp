@@ -6,13 +6,45 @@
              xmlns:local="clr-namespace:Todo.App.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" 
-             d:DesignWidth="800"
-             DataContext="Task">
+             d:DesignWidth="800">
+
     <Grid>
-        <StackPanel>
-            <TextBox Text="{Binding Path=Name, Mode=TwoWay}"></TextBox>
-            <TextBox Text="{Binding Path=Description, Mode=TwoWay}"></TextBox>
-            <TextBox Text="{Binding Path=DueDate, Mode=OneWay}"></TextBox>
-        </StackPanel>
+        <Border BorderBrush="Gray" BorderThickness="2" CornerRadius="8" Margin="4" Padding="8" Background="White">
+            <StackPanel>
+                <Label Content="{Binding StatusString}" FontSize="12" FontWeight="Thin"/>
+                <Label Content="{Binding Name}" FontSize="20" FontWeight="Bold"/>
+                <Label Content="{Binding Description}" FontSize="16"/>
+                <Label Content="{Binding DueDateString}" FontSize="14" FontStyle="Italic"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label Content="Edit:"/>
+                    <Button Command="{Binding EditName}" Content="Name"/>
+                    <Button Command="{Binding EditDescription}" Content="Description"/>
+                    <Button Command="{Binding EditDueDate}" Content="Due Date"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label Content="Actions:"/>
+                    <Button Command="{Binding ToggleCompletion}" 
+                            Content="{Binding ToggleCompletionString}" />
+                    <Button Content="Delete"
+                        Command="{Binding DataContext.DeleteTask, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                        CommandParameter="{Binding}"
+                    />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label Content="Move:"/>
+                    <Button Content="Up"
+                        Command="{Binding DataContext.MoveUp, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                        CommandParameter="{Binding}">
+                    </Button>
+                    <Button Content="Down"
+                        Command="{Binding DataContext.MoveDown, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                        CommandParameter="{Binding}">
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>
